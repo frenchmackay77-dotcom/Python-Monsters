@@ -6,6 +6,8 @@ from sprites import Sprite
 from entities import Player
 from groups import AllSprites
 
+from support import *
+
 
 class Game:
     def __init__(self):
@@ -18,7 +20,7 @@ class Game:
         self.all_sprites = AllSprites()
 
         self.import_assets()
-        self.setup(self.tmx_maps["hospital"], "world")
+        self.setup(self.tmx_maps["world"], "house")
 
     def import_assets(self):
         self.tmx_maps = {
@@ -26,13 +28,15 @@ class Game:
             "hospital": load_pygame(join("..", "data", "maps", "hospital.tmx")),
         }
 
+        self.overworld_frames = {
+            "water": import_folder("..", "graphics", "tilesets", "water")
+        }
+
     def setup(self, tmx_map, player_start_pos):
         # Terrain
-        for x, y, surf in tmx_map.get_layer_by_name("Terrain").tiles():
-            Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites)
-
-        for x, y, surf in tmx_map.get_layer_by_name("Terrain Top").tiles():
-            Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites)
+        for layer in ["Terrain", "Terrain Top"]:
+            for x, y, surf in tmx_map.get_layer_by_name(layer).tiles():
+                Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites)
 
         # Objects
         for obj in tmx_map.get_layer_by_name("Objects"):
